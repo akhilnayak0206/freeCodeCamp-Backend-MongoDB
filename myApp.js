@@ -14,7 +14,10 @@
 //
 // mongoose.connect(<Your URI>, { useNewUrlParser: true, useUnifiedTopology: true }); 
 
+const mongoose = require('mongoose');
+require('dotenv').config(); // <--- Edited by Akhil Nayak 0206 add dotenv to use env file other will get MONGO_URI undefined
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 /** # SCHEMAS and MODELS #
 /*  ====================== */
