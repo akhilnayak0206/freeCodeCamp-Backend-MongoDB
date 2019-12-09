@@ -131,6 +131,16 @@ let arrayOfPeople = [
     name: "Third Nayak",
     age: 31,
     favoriteFoods: ["Tomato", "Potato", "Butter Milk"]
+  },
+  {
+    name: "Delete1",
+    age: 3,
+    favoriteFoods: ["Tomato", "Potato", "Butter Milk"]
+  },
+  {
+    name: "Mary",
+    age: 1,
+    favoriteFoods: ["Made", "To", "Delete"]
   }
 ];
 
@@ -140,6 +150,7 @@ var createManyPeople = function(arrayOfPeople, done) {
     done(null, people);
   });
 };
+
 
 /** # C[R]UD part II - READ #
 /*  ========================= */
@@ -152,13 +163,13 @@ var createManyPeople = function(arrayOfPeople, done) {
 // Use the function argument `personName` as search key.
 
 var findPeopleByName = function(personName, done) {
-  Person.find({name: personName}, function (err, personFound) {
+  Person.find({ name: personName }, function(err, personFound) {
     if (err) return console.log(err);
     done(null, personFound);
   });
 };
 
-  // findPeopleByName();
+// findPeopleByName();
 /** 6) Use `Model.findOne()` */
 
 // `Model.findOne()` behaves like `.find()`, but it returns **only one**
@@ -169,7 +180,7 @@ var findPeopleByName = function(personName, done) {
 // argument `food` as search key
 
 var findOneByFood = function(food, done) {
-  Person.findOne({favoriteFood: food}, function (err, data) {
+  Person.findOne({ favoriteFoods: food }, function(err, data) {
     if (err) return console.log(err);
     done(null, data);
   });
@@ -185,12 +196,11 @@ var findOneByFood = function(food, done) {
 // Use the function argument 'personId' as search key.
 
 var findPersonById = function(personId, done) {
-  Person.findById({_id: personId}, function (err, data) {
+  Person.findById({ _id: personId }, function(err, data) {
     if (err) return console.log(err);
     done(null, data);
   });
 };
-
 
 /** # CR[U]D part III - UPDATE # 
 /*  ============================ */
@@ -217,16 +227,22 @@ var findPersonById = function(personId, done) {
 // manually mark it as edited using `document.markModified('edited-field')`
 // (http://mongoosejs.com/docs/schematypes.html - #Mixed )
 
-var findEditThenSave = function(personId, done) {
-  var foodToAdd = "hamburger";
-  Person.update(Fav)
-  done(null /*, data*/);
+let findEditThenSave = (personId, done) => {
+  let foodToAdd = "hamburger";
+
+  Person.findById(personId, (err, data) => {
+    data.favoriteFoods.push(foodToAdd);
+    data.save();
+    console.log("hep", data);
+    if (err) return console.log(err);
+    done(null, data);
+  });
 };
 
 /** 9) New Update : Use `findOneAndUpdate()` */
 
 // Recent versions of `mongoose` have methods to simplify documents updating.
-// Some more advanced features (i.e. pre/post hooks, validation) beahve
+// Some more advanced features (i.e. pre/post hooks, validation) behave
 // differently with this approach, so the 'Classic' method is still useful in
 // many situations. `findByIdAndUpdate()` can be used when searching by Id.
 //
@@ -241,7 +257,15 @@ var findEditThenSave = function(personId, done) {
 var findAndUpdate = function(personName, done) {
   var ageToSet = 20;
 
-  done(null /*, data*/);
+  Person.findOneAndUpdate(
+    { name: personName },
+    { $set: { age: ageToSet } },
+    { new: true },
+    (err, data) => {
+      if (err) return console.log(err);
+      done(null, data);
+    }
+  );
 };
 
 /** # CRU[D] part IV - DELETE #
@@ -255,8 +279,12 @@ var findAndUpdate = function(personName, done) {
 // As usual, use the function argument `personId` as search key.
 
 var removeById = function(personId, done) {
-  done(null /*, data*/);
+  Person.findByIdAndRemove({ _id: personId }, (err, data) => {
+    if (err) return console.log(err);
+    done(null, data);
+  });
 };
+
 
 /** 11) Delete many People */
 
@@ -269,10 +297,15 @@ var removeById = function(personId, done) {
 // Don't forget to pass it to the `done()` callback, since we use it in tests.
 
 var removeManyPeople = function(done) {
-  var nameToRemove = "Mary";
-
-  done(null /*, data*/);
+  var nameToRemove = "Hello";
+  Person.remove({name: nameToRemove}, (err, data)=>{
+    if(err) return console.log(err);
+    console.log("data:",data);
+    done(null, data);
+  })
 };
+
+removeManyPeople()
 
 /** # C[R]UD part V -  More about Queries # 
 /*  ======================================= */
