@@ -187,12 +187,10 @@ var findOneByFood = function(food, done) {
 var findPersonById = function(personId, done) {
   Person.findById({_id: personId}, function (err, data) {
     if (err) return console.log(err);
-    console.log("data",data)
     done(null, data);
   });
 };
 
-findPersonById("5dee165dfeb1bb38a8951177")
 
 /** # CR[U]D part III - UPDATE # 
 /*  ============================ */
