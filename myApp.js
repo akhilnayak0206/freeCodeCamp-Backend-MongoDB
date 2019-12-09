@@ -151,7 +151,6 @@ var createManyPeople = function(arrayOfPeople, done) {
   });
 };
 
-
 /** # C[R]UD part II - READ #
 /*  ========================= */
 /** 5) Use `Model.find()` */
@@ -285,7 +284,6 @@ var removeById = function(personId, done) {
   });
 };
 
-
 /** 11) Delete many People */
 
 // `Model.remove()` is useful to delete all the documents matching given criteria.
@@ -297,15 +295,12 @@ var removeById = function(personId, done) {
 // Don't forget to pass it to the `done()` callback, since we use it in tests.
 
 var removeManyPeople = function(done) {
-  var nameToRemove = "Hello";
-  Person.remove({name: nameToRemove}, (err, data)=>{
-    if(err) return console.log(err);
-    console.log("data:",data);
+  var nameToRemove = "Mary";
+  Person.remove({ name: nameToRemove }, (err, data) => {
+    if (err) return console.log(err);
     done(null, data);
-  })
+  });
 };
-
-removeManyPeople()
 
 /** # C[R]UD part V -  More about Queries # 
 /*  ======================================= */
@@ -326,9 +321,15 @@ removeManyPeople()
 // passing the `done(err, data)` callback to it.
 
 var queryChain = function(done) {
-  var foodToSearch = "burrito";
-
-  done(null /*, data*/);
+  var foodToSearch = "Pizza";
+  Person.find({ favoriteFoods: foodToSearch })
+    .sort({ name: 1 })    //<--Edited By Akhil Nayak 0206---> 1 means ascending.
+    .limit(2)
+    .select({ age: 0 })   //<--Edited By Akhil Nayak 0206---> 0 means hide.
+    .exec((err, data) => {
+      if (err) return console.log(err);
+      done(null, data);
+    });
 };
 
 /** **Well Done !!**
